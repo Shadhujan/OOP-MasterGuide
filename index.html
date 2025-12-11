@@ -8460,7 +8460,7 @@
           Knowledge Check
         </h2>
         <p class="text-slate-500">
-          Test your understanding of OOP concepts.
+          Test your understanding of OOP concepts and Design Patterns.
         </p>
       </div>
 
@@ -8475,7 +8475,7 @@
           </div>
           <h3 class="text-2xl font-bold text-slate-900 mb-2">Ready to Start?</h3>
           <p class="text-slate-500 mb-8 max-w-md mx-auto">
-            There are 5 questions. Try to get a perfect score!
+            There are 18 questions. Try to get a perfect score!
           </p>
           <button onclick="quizStart()"
             class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
@@ -8484,7 +8484,7 @@
         </div>
 
         <!-- Quiz Interface -->
-        <div id="quiz-interface" class="hidden h-full flex flex-col p-8">
+        <div id="quiz-interface" class="hidden flex flex-col p-8">
 
           <!-- Progress -->
           <div class="flex justify-between items-center mb-8 text-sm font-bold text-slate-400">
@@ -8498,7 +8498,7 @@
           </h3>
 
           <!-- Options -->
-          <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 content-start">
+          <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 content-start">
             <!-- Buttons injected by JS -->
           </div>
 
@@ -8909,61 +8909,437 @@
 
     /* --- MODULE 4: QUIZ --- */
     const quizData = [
+      // 1. BASICS
       {
-        q: "What is Encapsulation?",
+        q: "What is the primary goal of Encapsulation?",
         options: [
-          "Hiding internal data and methods",
-          "Creating multiple instances of a class",
-          "Inheriting properties from a parent",
-          "Using complex algorithms"
+          "To hide internal state and validation logic",
+          "To create multiple copies of a function",
+          "To inherit properties from a parent",
+          "To allow a function to accept any type of argument"
         ],
-        a: 0 // Index of correct answer
+        a: 0,
+        explanation: "Encapsulation bundles data and methods, preventing external interference and misuse (e.g., setting a negative age).",
+        hints: [
+          "",
+          "No, that's regular function usage or cloning.",
+          "That describes Inheritance.",
+          "That describes dynamic typing or Polymorphism."
+        ]
       },
       {
-        q: "Which keyword extends a class in JavaScript?",
+        q: "Which keyword is used to inherit from a class in JavaScript?",
         options: [
           "super",
           "implements",
           "extends",
           "inherit"
         ],
-        a: 2
+        a: 2,
+        explanation: "`class Dog extends Animal` creates a child class that inherits methods from the parent.",
+        hints: [
+          "`super` calls the parent constructor, but doesn't define the inheritance relationship.",
+          "`implements` is used in languages like Java for Interfaces, or Typescript.",
+          "",
+          "`inherit` is not a valid JS keyword."
+        ]
       },
+      // 2. SCENARIOS (Real World)
       {
-        q: "What does the Singleton pattern ensure?",
+        q: "SCENARIO: Payment Gateway. You need to support Credit Cards, PayPal, and Bitcoin. Each has a `process()` method. Which concept lets you treat them all as generic `PaymentMethod`s?",
         options: [
-          "Only one instance of a class exists",
-          "Objects can be cloned easily",
-          "Classes are loosely coupled",
-          "Methods are private by default"
+          "Encapsulation",
+          "Inheritance only",
+          "Polymorphism",
+          "Singleton"
         ],
-        a: 0
+        a: 2,
+        explanation: "Polymorphism allows you to call `payment.process()` without caring if it's a CreditCard or Bitcoin object. They all share the same interface.",
+        hints: [
+          "Encapsulation protects data, it doesn't solve the uniform interface problem.",
+          "Inheritance provides the structure, but the *ability to treat them uniformly* at runtime is Polymorphism.",
+          "",
+          "Singleton would restrict you to only ONE payment method instance, which is wrong."
+        ]
       },
       {
-        q: "Which concept allows different classes to be treated as instances of the same parent class?",
+        q: "SCENARIO: User Profile. You want to ensure `user.age` cannot be set to a negative number.",
         options: [
-          "Abstraction",
+          "Use a public field `age`",
+          "Use a private field `#age` with a setter",
+          "Use Inheritance",
+          "Use a Global Variable"
+        ],
+        a: 1,
+        explanation: "By making `#age` private, you force external code to use `setAge(val)`, where you can add `if(val < 0) throw Error`.",
+        hints: [
+          "Public fields allow anyone to set `user.age = -5`.",
+          "",
+          "Inheritance doesn't protect data from modification.",
+          "Global variables are the opposite of encapsulation/safety."
+        ]
+      },
+      // 3. DESIGN PATTERNS & CODE
+      {
+        q: `CODE CHALLENGE: Which pattern is this?
+<div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-xl my-4">
+  <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+    <span class="ml-2 font-mono text-xs text-slate-400">quiz.js</span>
+  </div>
+  <div class="p-4 font-mono text-xs text-slate-300">
+    <span class="kwd">class</span> <span class="cls">Logistics</span> {<br/>
+    &nbsp;&nbsp;<span class="fun">createTransport</span>() {<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kwd">return new</span> <span class="cls">Truck</span>();<br/> 
+    &nbsp;&nbsp;}<br/>
+    }
+  </div>
+</div>`,
+        options: [
+          "Observer",
+          "Factory Method",
+          "Strategy",
+          "Adapter"
+        ],
+        a: 1,
+        explanation: "The Factory Method pattern defines a method (`createTransport`) for creating objects, letting subclasses decide which class to instantiate (e.g., Truck vs Ship).",
+        hints: [
+          "This code creates something, it doesn't watch for events.",
+          "",
+          "Strategy is for swapping algorithms, not creation.",
+          "Adapter is for connecting interfaces."
+        ]
+      },
+      {
+        q: `CODE CHALLENGE: Identify the Pattern.
+<div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-xl my-4">
+  <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+    <span class="ml-2 font-mono text-xs text-slate-400">database.js</span>
+  </div>
+  <div class="p-4 font-mono text-xs text-slate-300">
+    <span class="kwd">class</span> <span class="cls">Connection</span> {<br/>
+    &nbsp;&nbsp;<span class="kwd">constructor</span>() {<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kwd">if</span>(<span class="cls">Connection</span>.instance) <span class="kwd">return</span> <span class="cls">Connection</span>.instance;<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="cls">Connection</span>.instance = <span class="kwd">this</span>;<br/>
+    &nbsp;&nbsp;}<br/>
+    }
+  </div>
+</div>`,
+        options: [
+          "Singleton",
+          "Prototype",
+          "Decorator",
+          "Facade"
+        ],
+        a: 0,
+        explanation: "The code ensures that `new Connection()` always returns the SAME instance. This is the Singleton pattern.",
+        hints: [
+          "",
+          "Prototype involves cloning objects.",
+          "Decorator wraps objects to add behavior.",
+          "Facade simplifies an interface."
+        ]
+      },
+      {
+        q: `SCENARIO: You want to swap between 'Walking', 'Driving', and 'Transit' routing algorithms at runtime.`,
+        options: [
+          "State Pattern",
+          "Strategy Pattern",
+          "Command Pattern",
+          "Template Pattern"
+        ],
+        a: 1,
+        explanation: "The Strategy Pattern lets you define a family of algorithms (routes), encapsulate each one, and make them interchangeable.",
+        hints: [
+          "State pattern is about internal state changes (like 'Loading' vs 'Ready').",
+          "",
+          "Command pattern represents a request as an object.",
+          "Template pattern defines a skeleton in a parent class."
+        ]
+      },
+      {
+        q: `CODE CHALLENGE: What does this code demonstrate?
+<div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-xl my-4">
+  <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+    <span class="ml-2 font-mono text-xs text-slate-400">Animal.js</span>
+  </div>
+  <div class="p-4 font-mono text-xs text-slate-300">
+    <span class="kwd">class</span> <span class="cls">Dog</span> <span class="kwd">extends</span> <span class="cls">Animal</span> {<br/>
+    &nbsp;&nbsp;<span class="fun">speak</span>() { <span class="kwd">return</span> "Woof"; }<br/>
+    }<br/>
+    <span class="kwd">class</span> <span class="cls">Cat</span> <span class="kwd">extends</span> <span class="cls">Animal</span> {<br/>
+    &nbsp;&nbsp;<span class="fun">speak</span>() { <span class="kwd">return</span> "Meow"; }<br/>
+    }<br/>
+    animals.<span class="fun">forEach</span>(a => a.<span class="fun">speak</span>());
+  </div>
+</div>`,
+        options: [
+          "Strict Typing",
           "Polymorphism",
           "Encapsulation",
-          "Construction"
+          "Multiple Inheritance"
         ],
-        a: 1
+        a: 1,
+        explanation: "Different objects (Dog, Cat) responding to the same method call (`speak()`) in their own way is the definition of Polymorphism.",
+        hints: [
+          "JS is loosely typed.",
+          "",
+          "Methods are public here, not encapsulated.",
+          "JS does not support multiple inheritance."
+        ]
+      },
+      // 4. ADVANCED PATTERNS
+      {
+        q: `CODE CHALLENGE: Identify the Pattern.
+<div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-xl my-4">
+  <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+    <span class="ml-2 font-mono text-xs text-slate-400">Logger.js</span>
+  </div>
+  <div class="p-4 font-mono text-xs text-slate-300">
+    <span class="kwd">function</span> <span class="fun">log</span>(originalFn) {<br/>
+    &nbsp;&nbsp;<span class="kwd">return function</span>(...args) {<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;console.log("Calling...");<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kwd">return</span> originalFn(...args);<br/>
+    &nbsp;&nbsp;}<br/>
+    }<br/>
+    <span class="kwd">const</span> trackedAdd = <span class="fun">log</span>(add);
+  </div>
+</div>`,
+        options: [
+          "Adapter",
+          "Decorator",
+          "Proxy",
+          "Facade"
+        ],
+        a: 1,
+        explanation: "The `log` function wraps the original function to add new behavior (logging) without changing the original code. This is the Decorator pattern (functional style).",
+        hints: [
+          "Adapter converts interfaces.",
+          "",
+          "Proxy controls access to an object (similar, but Decorator is about adding behavior).",
+          "Facade hides complexity."
+        ]
       },
       {
-        q: "What is a Facade used for?",
+        q: "SCENARIO: Traffic Light System. The light changes from Green -> Yellow -> Red. The behavior of `nextLight()` depends on the *current* color. Which pattern models this state-dependent behavior best?",
         options: [
-          "Creating simplified interfaces for complex systems",
-          "Connecting incompatible interfaces",
-          "Managing state changes",
-          "Creating objects without specifying the class"
+          "Strategy Pattern",
+          "State Pattern",
+          "Command Pattern",
+          "Observer Pattern"
         ],
-        a: 0
+        a: 1,
+        explanation: "The State Pattern allows an object to alter its behavior when its internal state changes. The object will appear to change its class.",
+        hints: [
+          "Strategy is for choosing an algorithm at start.",
+          "",
+          "Command encapsulates a request.",
+          "Observer is for notifying subscribers."
+        ]
+      },
+      {
+        q: "SCENARIO: File System. You have 'Files' and 'Folders'. A Folder can contain Files OR other Folders. You want to treat individual Files and compositions of Files (Folders) uniformly. Which pattern?",
+        options: [
+          "Composite Pattern",
+          "Iterator Pattern",
+          "Chain of Responsibility",
+          "Flyweight Pattern"
+        ],
+        a: 0,
+        explanation: "The Composite Pattern lets you compose objects into tree structures to represent part-whole hierarchies. It lets clients treat individual objects and compositions of objects uniformly.",
+        hints: [
+          "",
+          "Iterator is for traversing collections.",
+          "Chain of Responsibility passes a request along a chain.",
+          "Flyweight is for sharing common state to save memory."
+        ]
+      },
+      // 5. MORE PATTERNS & JS OOP
+      {
+        q: `CODE CHALLENGE: Identify the Pattern.
+<div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-xl my-4">
+  <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+    <span class="ml-2 font-mono text-xs text-slate-400">converter.js</span>
+  </div>
+  <div class="p-4 font-mono text-xs text-slate-300">
+    <span class="kwd">class</span> <span class="cls">VideoConverter</span> {<br/>
+    &nbsp;&nbsp;<span class="fun">convert</span>(file) {<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">// Hide complex logic:</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">// 1. decoder.init()</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">// 2. stream.read()</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">// 3. encoder.write()</span><br/>
+    &nbsp;&nbsp;}<br/>
+    }
+  </div>
+</div>`,
+        options: [
+          "Adapter",
+          "Facade",
+          "Proxy",
+          "Bridge"
+        ],
+        a: 1,
+        explanation: "This class provides a simplified interface (`convert`) to a complex subsystem (decoders, streams, encoders). This is the Facade pattern.",
+        hints: [
+          "Adapter is for making incompatible interfaces work together.",
+          "",
+          "Proxy adds access control.",
+          "Bridge separates abstraction from implementation."
+        ]
+      },
+      {
+        q: "SCENARIO: Undo/Redo Functionality. You are building a text editor and need to implement 'Ctrl+Z'. Which pattern treats requests as objects (swapping operations) to allow history tracking?",
+        options: [
+          "Memento Pattern",
+          "Command Pattern",
+          "Observer Pattern",
+          "State Pattern"
+        ],
+        a: 1,
+        explanation: "The Command Pattern turns a request (like 'bold text') into a stand-alone object containing all information about the request. This makes it easy to queue, delayed, or undo operations.",
+        hints: [
+          "Memento saves state, but Command is what turns the *action* into an object.",
+          "",
+          "Observer is for updates.",
+          "State is for checking status."
+        ]
+      },
+      {
+        q: "SCENARIO: You need to create complex 'Pizza' objects with many optional toppings (cheese, olives, mushrooms). Passing 10 arguments to a constructor is messy.",
+        options: [
+          "Factory Method",
+          "Builder Pattern",
+          "Prototype Pattern",
+          "Singleton"
+        ],
+        a: 1,
+        explanation: "The Builder Pattern lets you construct complex objects step by step. `new PizzaBuilder().addCheese().addOlives().build()`.",
+        hints: [
+          "Factory creates objects but doesn't solve the 'many arguments' complexity nicely.",
+          "",
+          "Prototype is for cloning.",
+          "Singleton is one instance."
+        ]
+      },
+      {
+        q: "SCENARIO: Lazy Loading. You have a heavy 'GraphImage' object that takes 5 seconds to load. You want to use a placeholder object that looks like the image but only loads the real one when requested.",
+        options: [
+          "Proxy Pattern",
+          "Decorator Pattern",
+          "Flyweight Pattern",
+          "Adapter Pattern"
+        ],
+        a: 0,
+        explanation: "A Proxy acts as a substitute. A 'Virtual Proxy' can handle lazy initialization, loading the real object only when needed.",
+        hints: [
+          "",
+          "Decorator adds behavior.",
+          "Flyweight shares state.",
+          "Adapter converts interfaces."
+        ]
+      },
+      {
+        q: "SCENARIO: Object Cloning. You have a game unit with complex stats. You want to spawn 100 identical units without running the complex initialization code 100 times.",
+        options: [
+          "Factory Pattern",
+          "Prototype Pattern",
+          "Constructor Pattern",
+          "Builder Pattern"
+        ],
+        a: 1,
+        explanation: "The Prototype Pattern creates new objects by cloning an existing object (prototype).",
+        hints: [
+          "Factory creates new via classes/methods.",
+          "",
+          "Constructor runs the init code.",
+          "Builder is steps."
+        ]
+      },
+      {
+        q: `CODE CHALLENGE: What is the output?
+<div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-xl my-4">
+  <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+    <span class="ml-2 font-mono text-xs text-slate-400">math.js</span>
+  </div>
+  <div class="p-4 font-mono text-xs text-slate-300">
+    <span class="kwd">class</span> <span class="cls">MathUtil</span> {<br/>
+    &nbsp;&nbsp;<span class="kwd">static</span> <span class="fun">add</span>(a, b) { <span class="kwd">return</span> a + b; }<br/>
+    }<br/>
+    <span class="kwd">const</span> m = <span class="kwd">new</span> <span class="cls">MathUtil</span>();<br/>
+    <span class="com">// console.log(m.add(1, 1));</span>
+  </div>
+</div>`,
+        options: [
+          "2",
+          "undefined",
+          "Error (m.add is not a function)",
+          "null"
+        ],
+        a: 2,
+        explanation: "Static methods belong to the class, not the instance. You must call `MathUtil.add(1, 1)`. Calling it on instance `m` fails.",
+        hints: [
+          "Static methods are not on the prototype chain of the instance.",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        q: `CODE CHALLENGE: The 'super' keyword.
+<div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-xl my-4">
+  <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+    <span class="ml-2 font-mono text-xs text-slate-400">car.js</span>
+  </div>
+  <div class="p-4 font-mono text-xs text-slate-300">
+    <span class="kwd">class</span> <span class="cls">Car</span> <span class="kwd">extends</span> <span class="cls">Vehicle</span> {<br/>
+    &nbsp;&nbsp;<span class="kwd">constructor</span>() {<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">// Missing something?</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kwd">this</span>.wheels = 4;<br/>
+    &nbsp;&nbsp;}<br/>
+    }
+  </div>
+</div>`,
+        options: [
+          "It works fine.",
+          "Error: Must call super() before accessing 'this'",
+          "Error: Constructor cannot be empty",
+          "Vehicle constructor is optional"
+        ],
+        a: 1,
+        explanation: "In a derived class (one that extends another), you MUST call `super()` before you can use `this`. `super()` calls the parent constructor.",
+        hints: [
+          "Try running it, JS throws a ReferenceError.",
+          "",
+          "It's not empty, it has code.",
+          "If you define a constructor in child, you must call super."
+        ]
       }
     ];
 
     let quizCurrentIdx = 0;
     let quizScore = 0;
     let quizIsLocked = false;
+    let quizHasWrongs = false;
 
     function quizStart() {
       document.getElementById("quiz-start").classList.add("hidden");
@@ -8975,11 +9351,12 @@
     function quizLoad(idx) {
       quizCurrentIdx = idx;
       quizIsLocked = false;
+      quizHasWrongs = false;
       const data = quizData[idx];
 
       // Update UI
       document.getElementById("quiz-progress-current").innerText = idx + 1;
-      document.getElementById("quiz-question").innerText = data.q;
+      document.getElementById("quiz-question").innerHTML = data.q;
 
       // Reset Feedback
       document.getElementById("quiz-feedback").classList.add("hidden");
@@ -9000,44 +9377,62 @@
 
     function quizSelect(idx, btn) {
       if (quizIsLocked) return;
-      quizIsLocked = true;
 
       const data = quizData[quizCurrentIdx];
       const correct = idx === data.a;
 
-      // Style buttons
-      const buttons = document.getElementById("quiz-options").children;
-      Array.from(buttons).forEach((b, i) => {
-        if (i === data.a) {
-          b.className = "w-full text-left p-4 rounded-xl border border-green-500 bg-green-100 text-green-800 font-bold";
-        } else if (i === idx && !correct) {
-          b.className = "w-full text-left p-4 rounded-xl border border-red-500 bg-red-100 text-red-800 opacity-80";
-        } else {
-          b.classList.add("opacity-50");
-        }
-      });
-
-      // Show Feedback
       const fb = document.getElementById("quiz-feedback");
       const fbText = document.getElementById("quiz-feedback-text");
       const nextBtn = document.getElementById("quiz-btn-next");
 
-      fb.classList.remove("hidden");
       if (correct) {
-        quizScore++;
-        document.getElementById("quiz-score").innerText = quizScore;
-        fb.classList.add("bg-green-100", "text-green-800");
-        fbText.innerHTML = `<span class="material-symbols-outlined align-middle mr-2">check_circle</span> Correct!`;
-      } else {
-        fb.classList.add("bg-red-100", "text-red-800");
-        fbText.innerHTML = `<span class="material-symbols-outlined align-middle mr-2">cancel</span> Incorrect.`;
-      }
+        // Correct Answer
+        quizIsLocked = true;
+        btn.className = "w-full text-left p-4 rounded-xl border border-green-500 bg-green-100 text-green-800 font-bold shadow-md";
 
-      // Check last
-      if (quizCurrentIdx === quizData.length - 1) {
-        nextBtn.innerText = "Finish";
+        // Update Score only if no wrong attempts were made (implied complexity, but simplified here: honest score requires state)
+        // For now, we just increment if locked becomes true. To be strict about "first try", we'd need a flag.
+        // Let's allow scoring for getting it right eventually? Or strictly first try?
+        // User said "mark as red and dont reveal... let user find correct answer".
+        // Usually scoring is 'first try only'. I'll add a 'quizHasWrongs' flag.
+        if (!quizHasWrongs) quizScore++;
+        document.getElementById("quiz-score").innerText = quizScore;
+
+        fb.classList.remove("hidden");
+        fb.className = "mt-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-900";
+        fbText.innerHTML = `
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-green-600 mt-1">check_circle</span>
+            <div>
+              <div class="font-bold text-lg mb-1">Correct!</div>
+              <div class="text-sm opacity-90 leading-relaxed">${data.explanation}</div>
+            </div>
+          </div>`;
+
+        // Show Next Button
+        if (quizCurrentIdx === quizData.length - 1) {
+          nextBtn.innerText = "Finish Quiz";
+        } else {
+          nextBtn.innerText = "Next Question";
+        }
+        nextBtn.classList.remove("hidden");
+
       } else {
-        nextBtn.innerText = "Next";
+        // Wrong Answer
+        quizHasWrongs = true;
+        btn.className = "w-full text-left p-4 rounded-xl border border-red-500 bg-red-100 text-red-800 opacity-80 cursor-not-allowed";
+        btn.disabled = true; // Disable this specific wrong option
+
+        // Specific Hint if available
+        let wrongMsg = "Incorrect. Try another option.";
+        if (data.hints && data.hints[idx]) {
+          wrongMsg = data.hints[idx];
+        }
+
+        fb.classList.remove("hidden");
+        fb.className = "mt-6 p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 flex items-center gap-2";
+        fbText.innerHTML = `<span class="material-symbols-outlined text-sm">cancel</span> <span>${wrongMsg}</span>`;
+        nextBtn.classList.add("hidden");
       }
     }
 
