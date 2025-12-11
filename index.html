@@ -8376,6 +8376,88 @@
     </div>
   </section>
 
+  <!-- SECTION 4: QUIZ -->
+  <section id="module-quiz" class="py-24 bg-white border-t border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="text-emerald-600 font-mono text-sm tracking-wider uppercase">Module 04</span>
+        <h2 class="text-4xl font-bold text-slate-900 mb-4">
+          Knowledge Check
+        </h2>
+        <p class="text-slate-500">
+          Test your understanding of OOP concepts.
+        </p>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative min-h-[400px]">
+
+        <!-- Start Screen -->
+        <div id="quiz-start"
+          class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-10 bg-slate-50">
+          <div
+            class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-6 mx-auto">
+            <span class="material-symbols-outlined text-4xl">quiz</span>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-900 mb-2">Ready to Start?</h3>
+          <p class="text-slate-500 mb-8 max-w-md mx-auto">
+            There are 5 questions. Try to get a perfect score!
+          </p>
+          <button onclick="quizStart()"
+            class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            Start Quiz
+          </button>
+        </div>
+
+        <!-- Quiz Interface -->
+        <div id="quiz-interface" class="hidden h-full flex flex-col p-8">
+
+          <!-- Progress -->
+          <div class="flex justify-between items-center mb-8 text-sm font-bold text-slate-400">
+            <span>Question <span id="quiz-progress-current">1</span>/<span id="quiz-progress-total">5</span></span>
+            <span class="text-emerald-600">Score: <span id="quiz-score">0</span></span>
+          </div>
+
+          <!-- Question -->
+          <h3 id="quiz-question" class="text-2xl font-bold text-slate-800 mb-8 leading-snug">
+            Question goes here?
+          </h3>
+
+          <!-- Options -->
+          <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 content-start">
+            <!-- Buttons injected by JS -->
+          </div>
+
+          <!-- Feedback / Next -->
+          <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-xl flex items-center justify-between">
+            <div id="quiz-feedback-text" class="font-bold"></div>
+            <button id="quiz-btn-next" onclick="quizNext()"
+              class="px-6 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors">
+              Next
+            </button>
+          </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="quiz-results"
+          class="hidden absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-slate-50 z-20">
+          <div class="mb-4">
+            <span class="material-symbols-outlined text-6xl text-emerald-500 mb-2">military_tech</span>
+          </div>
+          <h3 class="text-3xl font-bold text-slate-900 mb-2">Quiz Complete!</h3>
+          <p class="text-slate-600 mb-8 text-lg">
+            You scored <strong id="quiz-final-score" class="text-emerald-600">0</strong> out of <strong
+              id="quiz-final-total">5</strong>
+          </p>
+          <button onclick="quizReset()"
+            class="px-6 py-2 border-2 border-slate-300 text-slate-600 font-bold rounded-lg hover:border-slate-800 hover:text-slate-900 transition-all">
+            Try Again
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="bg-slate-900 text-slate-400 py-12 text-center border-t border-slate-800">
     <p class="mb-4">Generated OOP Masterguide © 2025</p>
@@ -8698,23 +8780,167 @@
       });
     }
 
+    /* --- MODULE 4: QUIZ --- */
+    const quizData = [
+      {
+        q: "What is Encapsulation?",
+        options: [
+          "Hiding internal data and methods",
+          "Creating multiple instances of a class",
+          "Inheriting properties from a parent",
+          "Using complex algorithms"
+        ],
+        a: 0 // Index of correct answer
+      },
+      {
+        q: "Which keyword extends a class in JavaScript?",
+        options: [
+          "super",
+          "implements",
+          "extends",
+          "inherit"
+        ],
+        a: 2
+      },
+      {
+        q: "What does the Singleton pattern ensure?",
+        options: [
+          "Only one instance of a class exists",
+          "Objects can be cloned easily",
+          "Classes are loosely coupled",
+          "Methods are private by default"
+        ],
+        a: 0
+      },
+      {
+        q: "Which concept allows different classes to be treated as instances of the same parent class?",
+        options: [
+          "Abstraction",
+          "Polymorphism",
+          "Encapsulation",
+          "Construction"
+        ],
+        a: 1
+      },
+      {
+        q: "What is a Facade used for?",
+        options: [
+          "Creating simplified interfaces for complex systems",
+          "Connecting incompatible interfaces",
+          "Managing state changes",
+          "Creating objects without specifying the class"
+        ],
+        a: 0
+      }
+    ];
+
+    let quizCurrentIdx = 0;
+    let quizScore = 0;
+    let quizIsLocked = false;
+
+    function quizStart() {
+      document.getElementById("quiz-start").classList.add("hidden");
+      document.getElementById("quiz-interface").classList.remove("hidden");
+      document.getElementById("quiz-progress-total").innerText = quizData.length;
+      quizLoad(0);
+    }
+
+    function quizLoad(idx) {
+      quizCurrentIdx = idx;
+      quizIsLocked = false;
+      const data = quizData[idx];
+
+      // Update UI
+      document.getElementById("quiz-progress-current").innerText = idx + 1;
+      document.getElementById("quiz-question").innerText = data.q;
+
+      // Reset Feedback
+      document.getElementById("quiz-feedback").classList.add("hidden");
+      document.getElementById("quiz-feedback").className = "hidden mt-6 p-4 rounded-xl flex items-center justify-between";
+
+      // Render Options
+      const container = document.getElementById("quiz-options");
+      container.innerHTML = "";
+
+      data.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 transition-all font-medium text-slate-600";
+        btn.innerText = opt;
+        btn.onclick = () => quizSelect(i, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function quizSelect(idx, btn) {
+      if (quizIsLocked) return;
+      quizIsLocked = true;
+
+      const data = quizData[quizCurrentIdx];
+      const correct = idx === data.a;
+
+      // Style buttons
+      const buttons = document.getElementById("quiz-options").children;
+      Array.from(buttons).forEach((b, i) => {
+        if (i === data.a) {
+          b.className = "w-full text-left p-4 rounded-xl border border-green-500 bg-green-100 text-green-800 font-bold";
+        } else if (i === idx && !correct) {
+          b.className = "w-full text-left p-4 rounded-xl border border-red-500 bg-red-100 text-red-800 opacity-80";
+        } else {
+          b.classList.add("opacity-50");
+        }
+      });
+
+      // Show Feedback
+      const fb = document.getElementById("quiz-feedback");
+      const fbText = document.getElementById("quiz-feedback-text");
+      const nextBtn = document.getElementById("quiz-btn-next");
+
+      fb.classList.remove("hidden");
+      if (correct) {
+        quizScore++;
+        document.getElementById("quiz-score").innerText = quizScore;
+        fb.classList.add("bg-green-100", "text-green-800");
+        fbText.innerHTML = `<span class="material-symbols-outlined align-middle mr-2">check_circle</span> Correct!`;
+      } else {
+        fb.classList.add("bg-red-100", "text-red-800");
+        fbText.innerHTML = `<span class="material-symbols-outlined align-middle mr-2">cancel</span> Incorrect.`;
+      }
+
+      // Check last
+      if (quizCurrentIdx === quizData.length - 1) {
+        nextBtn.innerText = "Finish";
+      } else {
+        nextBtn.innerText = "Next";
+      }
+    }
+
+    function quizNext() {
+      if (quizCurrentIdx < quizData.length - 1) {
+        quizLoad(quizCurrentIdx + 1);
+      } else {
+        quizShowResults();
+      }
+    }
+
+    function quizShowResults() {
+      document.getElementById("quiz-interface").classList.add("hidden");
+      document.getElementById("quiz-results").classList.remove("hidden");
+      document.getElementById("quiz-final-score").innerText = quizScore;
+      document.getElementById("quiz-final-total").innerText = quizData.length;
+    }
+
+    function quizReset() {
+      quizScore = 0;
+      document.getElementById("quiz-score").innerText = "0";
+      document.getElementById("quiz-results").classList.add("hidden");
+      quizStart();
+    }
+
     // Initialize All Modules
     enaSetCode("bad");
     patSwitchCat("creational");
   </script>
-  <!--
-    "/gen?prompt=cute+futuristic+robotic+dog+metallic+blue+eyes+white+background&aspect=1:1"
-    "/gen?prompt=sleek+futuristic+robotic+cat+glowing+neon+green+eyes+white+background&aspect=1:1"
-    "/gen?prompt=funny+robotic+duck+yellow+metal+propeller+tail+white+background&aspect=1:1"
-    "/gen?prompt=futuristic+robot+with+jetpack+wings+hovering+blue+glowing+details+white+background&aspect=1:1"
-    "/gen?prompt=modern+sleek+coffee+machine+on+a+kitchen+counter+photorealistic+bright+lighting&aspect=4:3"
-    "/gen?prompt=futuristic+robot+factory+arm+assembling+different+colored+geometric+shapes+3d+render+clean&aspect=16:9"
-    "/gen?prompt=a+single+golden+crown+sitting+on+a+pedestal+in+an+empty+room+spotlight+minimalist&aspect=16:9"
-    "/gen?prompt=visual+metaphor+of+a+round+peg+fitting+into+a+square+hole+using+a+special+connector+piece+minimalist&aspect=16:9"
-    "/gen?prompt=a+simple+sleek+white+button+floating+in+front+of+a+messy+complex+engine+blueprint+background&aspect=16:9"
-    "/gen?prompt=a+central+radio+tower+broadcasting+signals+to+many+small+houses+minimalist+vector+art&aspect=16:9"
-    "/gen?prompt=a+video+game+character+choosing+between+a+sword+a+bow+and+a+magic+staff+ui+overlay&aspect=16:9"
--->
+
 </body>
 
 </html>
