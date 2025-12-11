@@ -7919,6 +7919,11 @@
             onclick="univSwitchTab('polymorphism', this)">
             3. Polymorphism
           </button>
+          <button
+            class="univ-tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all"
+            onclick="univSwitchTab('encapsulation', this)">
+            4. Encap & Abstract
+          </button>
         </div>
       </div>
 
@@ -8113,6 +8118,76 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- TAB 4: ENCAPSULATION & ABSTRACTION -->
+  <div id="univ-view-encapsulation" class="univ-content transition-all duration-500 hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+
+      <!-- Encapsulation Example -->
+      <div class="bg-slate-900 rounded-2xl border border-slate-700 p-6 shadow-2xl">
+        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-red-500">shield_lock</span>
+          Encapsulation
+        </h2>
+        <p class="text-slate-400 text-sm mb-4">
+          Protect data via Private fields.
+        </p>
+        <div class="bg-black/40 rounded-xl p-4 border border-slate-800">
+          <div class="flex justify-between mb-4">
+            <div class="text-white font-bold">Reactor_X1</div>
+            <div class="text-green-400 font-mono" id="reactor-temp">500°C</div>
+          </div>
+          <div class="space-y-2 mb-4">
+            <button onclick="attemptHack()"
+              class="w-full text-left bg-red-900/20 hover:bg-red-900/40 border border-red-900/50 text-red-300 font-mono text-xs p-2 rounded transition-colors">
+              reactor.temp = 9999; <span class="opacity-50">// Direct Access</span>
+            </button>
+            <button onclick="usePublicMethod()"
+              class="w-full text-left bg-green-900/20 hover:bg-green-900/40 border border-green-900/50 text-green-300 font-mono text-xs p-2 rounded transition-colors">
+              reactor.increaseTemp(100); <span class="opacity-50">// Public Method</span>
+            </button>
+          </div>
+          <div id="console-output"
+            class="font-mono text-xs text-slate-500 h-24 overflow-y-auto p-2 bg-black/20 rounded border border-slate-800/50">
+            &gt; System Ready...
+          </div>
+        </div>
+      </div>
+
+      <!-- Abstraction Example -->
+      <div class="bg-slate-900 rounded-2xl border border-slate-700 p-6 shadow-2xl">
+        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-500">blur_on</span>
+          Abstraction
+        </h2>
+        <p class="text-slate-400 text-sm mb-4">
+          Hide complexity. Show Interface.
+        </p>
+        <div class="relative bg-slate-800 rounded-xl p-8 flex flex-col items-center justify-center min-h-[200px] gap-4">
+          <div
+            class="absolute top-2 left-2 right-2 flex justify-between opacity-20 text-[10px] font-mono text-slate-400 pointer-events-none">
+            <span>010110 initialize_quantum_flux();</span>
+            <span>calibrate_sensors(0x4F);</span>
+          </div>
+
+          <div class="relative">
+            <div id="abs-glow"
+              class="absolute inset-0 bg-purple-500/50 blur-xl rounded-full transition-all duration-500 opacity-0 scale-150">
+            </div>
+            <button id="abstraction-btn" onclick="toggleAbstraction()"
+              class="relative z-10 w-24 h-24 rounded-full border-4 border-purple-400 bg-purple-600 text-white font-bold text-lg shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center">
+              START
+            </button>
+          </div>
+
+          <div id="abs-status" class="text-xs font-mono text-slate-400 mt-2">Standby</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
   </section>
 
   <!-- SECTION 2: ENCAPSULATION VS ABSTRACTION -->
@@ -8485,7 +8560,7 @@
     /* --- MODULE 1: OOP UNIVERSE --- */
     function univSwitchTab(tab, btn) {
       // Hide all tabs
-      ["objects", "inheritance", "polymorphism"].forEach((t) => {
+      ["objects", "inheritance", "polymorphism", "encapsulation"].forEach((t) => {
         document.getElementById(`univ-view-${t}`).classList.add("hidden");
       });
       document.querySelectorAll(".univ-tab-btn").forEach((b) => {
@@ -8497,6 +8572,58 @@
       document.getElementById(`univ-view-${tab}`).classList.remove("hidden");
       btn.className =
         "univ-tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all";
+    }
+
+    /* --- MODULE 1: Encap & Abstract Logic --- */
+    function logConsole(msg, type = "info") {
+      const el = document.getElementById("console-output");
+      const color = type === "error" ? "text-red-400" : "text-green-400";
+      const line = document.createElement("div");
+      line.innerHTML = `<span class="${color}">&gt; ${msg}</span>`;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function attemptHack() {
+      logConsole("ERROR: property '#temp' is private.", "error");
+    }
+
+    function usePublicMethod() {
+      logConsole("Calling increaseTemp(100)...");
+      const t = document.getElementById("reactor-temp");
+      let val = parseInt(t.innerText);
+      // Simple animation
+      let target = val + 100;
+      t.innerText = target + "°C";
+    }
+
+    function toggleAbstraction() {
+      const btn = document.getElementById("abstraction-btn");
+      const st = document.getElementById("abs-status");
+      const glow = document.getElementById("abs-glow");
+
+      if (btn.innerText === "START") {
+        btn.innerText = "STOP";
+        // btn.classList.replace("bg-purple-600", "bg-red-600"); 
+        // We use explicit classes to handle the gradients/shadows better or keep it simple
+        btn.className = "relative z-10 w-24 h-24 rounded-full border-4 border-red-400 bg-red-600 text-white font-bold text-lg shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center";
+
+        st.innerText = "System Active (Details Hidden)";
+        st.className = "text-xs font-mono text-green-400 mt-2 animate-pulse";
+
+        glow.classList.remove("opacity-0");
+        glow.classList.add("opacity-100");
+
+      } else {
+        btn.innerText = "START";
+        btn.className = "relative z-10 w-24 h-24 rounded-full border-4 border-purple-400 bg-purple-600 text-white font-bold text-lg shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center";
+
+        st.innerText = "Standby";
+        st.className = "text-xs font-mono text-slate-400 mt-2";
+
+        glow.classList.remove("opacity-100");
+        glow.classList.add("opacity-0");
+      }
     }
 
     function univSpawnDroid() {
